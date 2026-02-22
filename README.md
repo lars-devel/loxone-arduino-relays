@@ -14,6 +14,8 @@ Here is my setup:
 - PCF8574 8 port GPIO exensions (I2C, up to 8 daisy chained modules)
 - 8 channel relay modules (5V, one per PCF8574 module, directly attached)
 
+Finally this will cost something about 100€ to control 64 state LEDs (or whatever is attached to the relays).
+
 The Loxone Miniserver is configured to send a UDP telegram to the Arduino to turn the state LED on or off.
 Sending the UDP telegram is done by configuring a "Virtual Output" /dev/udp/\<ip>/\<port> and one "Virtual Output Command" per state LED with hard coded contents when turning it on or off.
 The telegram contents is very simple: "\<bank>-\<port>:\<state>" with:
