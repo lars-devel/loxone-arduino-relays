@@ -23,4 +23,6 @@ The telegram contents is very simple: "\<bank>-\<port>:\<state>" with:
 - \<port>: the index of the GPIO pin of this PCF8574 module (0..7)
 - \<state>: the LED state to set (0 or 1)
 
+I.e. it's "0-0:1" to turn the LED attached to the first relay of the first PCF8574 module on or "1-2:0" to turn the LED attached to the 3rd relay of the 2nd PCF8574 module off.
+
 By now (February 2026) I just tested it with one PCF8574 module and two LEDs, more to come up soon. 
