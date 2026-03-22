@@ -33,7 +33,8 @@ char ReplyBuffer[] = "acknowledged";        // a string to send back
 // An EthernetUDP instance to let us send and receive packets over UDP
 EthernetUDP Udp;
 
-Adafruit_PCF8574 gpio0;
+#define NUM_PCF8574 8
+Adafruit_PCF8574 gpio[NUM_PCF8574];
 
 void setup() {
   // initialize digital pin LED_BUILTIN as an output.
@@ -103,18 +104,27 @@ void setup() {
 
   Serial.println("UDP started");
 
-  if (!gpio0.begin(0x20, &Wire)) {
-    Serial.println("Couldn't find PCF8574");
+  for (int bank = 0; bank < NUM_PCF8574; bank++) {
+    Serial.print("Init PCF8574 #");
+    Serial.print(bank);
+    Serial.print(" ... ");
+    if (!gpio[bank].begin(0x20 + bank, &Wire)) {
+      Serial.println("not found");
+    } else {
+      Serial.println("ok");
+      for (int pin = 0; pin < 8; pin++) {
+        gpio[bank].pinMode(pin, OUTPUT);
+      }
+    }
   }
-  gpio0.pinMode(0, OUTPUT);
 
-  Serial.println("GPIO initialized");
-
+/*
   Serial.println("GPIO -> 1");
   gpio0.digitalWrite(0, HIGH);
   delay(1000);
   Serial.println("GPIO -> 0");
   gpio0.digitalWrite(0, LOW);
+  */
 }
 
 IPAddress remote_ip(192, 168, 178, 61);
@@ -146,14 +156,14 @@ void loop() {
     int bank = (int)packetBuffer[0] - '0';
     int port = (int)packetBuffer[2] - '0';
     int state = (int)packetBuffer[4] - '0';
-    if ((bank >= 0) && (bank < 8) && (port >= 0) && (port < 8) && (state >= 0) && (state < 2)) {
+    if ((bank >= 0) && (bank < NUM_PCF8574) && (port >= 0) && (port < 8) && (state >= 0) && (state < 2)) {
       Serial.print("Bank ");
       Serial.print(bank);
       Serial.print(" Port ");
       Serial.print(port);
       Serial.print(" -> ");
       Serial.println(state ? "On" : "Off");
-      gpio0.digitalWrite(port, state ? HIGH : LOW);
+      gpio[bank].digitalWrite(port, state ? HIGH : LOW);
       /*
       if (packetBuffer[4] == '0') {
         Serial.println("GPIO -> 0");
